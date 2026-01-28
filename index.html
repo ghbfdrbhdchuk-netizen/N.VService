@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMM Panel Pro - Social Media Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white min-h-screen">
+    
+    <!-- Header -->
+    <header class="bg-black/30 backdrop-blur-md border-b border-purple-500/30 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-lg text-3xl">🛒</div>
+                <div>
+                    <h1 class="text-2xl font-bold">SMM Panel Pro</h1>
+                    <p class="text-xs text-gray-400">Social Media Services</p>
+                </div>
+            </div>
+            <div class="flex gap-3 items-center">
+                <div class="bg-purple-600/20 px-4 py-2 rounded-lg border border-purple-500/30">
+                    <span class="text-sm" id="cartCount">Cart: 0</span>
+                </div>
+                <button onclick="showAdminLogin()" id="adminBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition">
+                    🔒 Admin
+                </button>
+                <div id="pendingNotification" class="hidden bg-red-600 text-white px-3 py-2 rounded-lg font-bold animate-pulse">
+                    🔔 <span id="pendingCount">0</span> Pending
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-6">
+        
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-3 mb-8">
+            <button onclick="showTab('services')" class="tab-btn px-6 py-3 rounded-lg font-semibold bg-purple-600" data-tab="services">
+                📋 Services
+            </button>
+            <button onclick="showTab('order')" class="tab-btn px-6 py-3 rounded-lg font-semibold bg-gray-800" data-tab="order">
+                🛒 Order
+            </button>
+            <button onclick="showTab('checkout')" id="checkoutBtn" class="tab-btn px-6 py-3 rounded-lg font-semibold bg-gray-800 hidden" data-tab="checkout">
+                💳 Checkout (<span id="checkoutCount">0</span>)
+            </button>
+            <button onclick="showTab('history')" class="tab-btn px-6 py-3 rounded-lg font-semibold bg-gray-800" data-tab="history">
+                📜 My Orders
+            </button>
+            <button onclick="showTab('admin')" id="adminPanelBtn" class="tab-btn px-6 py-3 rounded-lg font-semibold bg-gray-800 hidden" data-tab="admin">
+                ⚙️ Admin
+            </button>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="servicesTab" class="tab-content">
+            <h2 class="text-3xl font-bold mb-6 text-center">Our Premium Services</h2>
+            <div id="servicesList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </div>
+
+        <!-- Order Tab -->
+        <div id="orderTab" class="tab-content hidden">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-gray-800/50 rounded-xl p-8 border border-purple-500/20">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Place Your Order</h2>
+                    <div class="space-y-6">
+                        <select id="orderService" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                            <option value="">Select Service</option>
+                        </select>
+                        <input type="url" id="orderLink" placeholder="Profile/Post Link" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                        <input type="number" id="orderQty" placeholder="Quantity" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                        <input type="email" id="orderEmail" placeholder="Email" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                        <button onclick="addToCart()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 py-4 rounded-lg font-bold text-lg transition">
+                            🛒 Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Tab -->
+        <div id="checkoutTab" class="tab-content hidden">
+            <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Order Summary -->
+                <div class="bg-gray-800/50 rounded-xl p-6 border border-purple-500/20">
+                    <h2 class="text-2xl font-bold mb-4">📦 Order Summary</h2>
+                    <div id="cartItems" class="space-y-3 mb-6"></div>
+                    <div class="border-t border-gray-700 pt-4">
+                        <div class="flex justify-between text-2xl font-bold">
+                            <span>Total:</span>
+                            <span class="text-green-400" id="cartTotal">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="bg-gray-800/50 rounded-xl p-6 border border-purple-500/20">
+                    <h2 class="text-2xl font-bold mb-4">💳 Payment Method</h2>
+                    <div class="space-y-4 mb-6">
+                        <button onclick="selectPayment('upi')" class="payment-btn w-full p-4 rounded-lg border-2 border-purple-500 bg-purple-500/20" data-payment="upi">
+                            <span class="font-semibold">💳 UPI / Google Pay</span>
+                        </button>
+                        <button onclick="selectPayment('bitcoin')" class="payment-btn w-full p-4 rounded-lg border-2 border-gray-700" data-payment="bitcoin">
+                            <span class="font-semibold">₿ Bitcoin</span>
+                        </button>
+                    </div>
+
+                    <!-- UPI Payment -->
+                    <div id="upiPayment">
+                        <div class="bg-gray-900/50 rounded-lg p-6 text-center border border-purple-500/20">
+                            <h3 class="font-bold text-lg mb-4 text-purple-300">Scan QR Code to Pay $<span class="payment-total">0.00</span></h3>
+                            <div class="bg-white p-4 rounded-lg inline-block mb-4 shadow-lg">
+                                <img src="https://i.ibb.co/8DWsHVJ/qr-code.png" alt="UPI QR Code" class="w-48 h-48 rounded-lg">
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">📱 Scan with any UPI app</p>
+                            <div class="bg-purple-900/20 p-4 rounded-lg mb-4 border border-purple-500/30">
+                                <p class="text-3xl font-bold text-white">$<span class="payment-total">0.00</span> USD</p>
+                            </div>
+                            
+                            <!-- Payment Verification -->
+                            <div class="bg-red-900/20 p-4 rounded-lg mb-4 border border-red-500/30">
+                                <p class="text-sm font-semibold text-red-300 mb-3">🔐 Payment Verification Required</p>
+                                <div class="text-left">
+                                    <label class="block text-xs text-gray-400 mb-1">UPI Transaction ID / UTR Number *</label>
+                                    <input 
+                                        type="text" 
+                                        id="upiTransactionId" 
+                                        placeholder="Enter 12-digit UTR number"
+                                        class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+                                        maxlength="12"
+                                    >
+                                    <p class="text-xs text-yellow-400 mt-2">⚠️ Admin will verify this UTR before processing your order</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-yellow-900/20 p-4 rounded-lg mb-4 border border-yellow-500/30">
+                                <p class="text-sm text-yellow-300">
+                                    ⚠️ <strong>Important:</strong> Admin will manually verify your payment. Order will be in "Pending Verification" status until approved.
+                                </p>
+                            </div>
+
+                            <div class="flex items-center mb-4 justify-center bg-gray-800/50 p-3 rounded-lg">
+                                <input type="checkbox" id="paymentConfirm" class="w-5 h-5 mr-3 cursor-pointer">
+                                <label for="paymentConfirm" class="text-sm font-semibold cursor-pointer">
+                                    ✓ I confirm I have made the payment
+                                </label>
+                            </div>
+                            <button onclick="submitOrder('upi')" id="confirmOrderBtn" disabled class="w-full py-4 rounded-lg font-bold text-lg transition shadow-lg bg-gray-600 cursor-not-allowed opacity-50">
+                                ⏳ Fill Payment Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bitcoin Payment -->
+                    <div id="bitcoinPayment" class="hidden">
+                        <div class="bg-gray-900/50 rounded-lg p-6 border border-purple-500/20">
+                            <h3 class="font-bold text-lg mb-4 text-orange-400">₿ Bitcoin Payment</h3>
+                            <div class="bg-gray-800 p-4 rounded-lg mb-4">
+                                <p class="text-xs text-gray-400 mb-2">Send Bitcoin to:</p>
+                                <div class="bg-black/50 p-3 rounded border border-gray-700">
+                                    <p class="text-xs font-mono break-all text-orange-400 select-all">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</p>
+                                </div>
+                                <button onclick="copyBitcoin()" class="mt-2 text-xs text-purple-400 bg-purple-900/20 px-3 py-1 rounded">
+                                    📋 Copy
+                                </button>
+                            </div>
+                            <div class="bg-orange-900/20 p-4 rounded-lg mb-4 border border-orange-500/30">
+                                <p class="text-2xl font-bold text-white">$<span class="payment-total">0.00</span> USD</p>
+                            </div>
+                            
+                            <div class="bg-red-900/20 p-4 rounded-lg mb-4 border border-red-500/30">
+                                <div class="space-y-3 text-left">
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">Transaction Hash *</label>
+                                        <input 
+                                            type="text" 
+                                            id="btcTxHash" 
+                                            placeholder="Enter transaction hash"
+                                            class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-yellow-900/20 p-4 rounded-lg mb-4 border border-yellow-500/30">
+                                <p class="text-sm text-yellow-300">
+                                    ⚠️ Admin will verify on blockchain before processing
+                                </p>
+                            </div>
+
+                            <div class="flex items-center mb-4">
+                                <input type="checkbox" id="btcConfirm" class="w-5 h-5 mr-3 cursor-pointer">
+                                <label for="btcConfirm" class="text-sm">I have sent Bitcoin</label>
+                            </div>
+                            <button onclick="submitOrder('bitcoin')" id="btcOrderBtn" disabled class="w-full py-4 rounded-lg font-bold text-lg bg-gray-600 cursor-not-allowed">
+                                Fill Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order History -->
+        <div id="historyTab" class="tab-content hidden">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold mb-6 text-center">📜 My Orders</h2>
+                <div id="orderHistoryList"></div>
+            </div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="adminTab" class="tab-content hidden">
+            <div class="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4 mb-6">
+                <h2 class="text-2xl font-bold">⚙️ Admin Dashboard</h2>
+            </div>
+
+            <!-- Pending Verification -->
+            <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6 mb-6">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                    🔔 Pending Verification (<span id="adminPendingCount">0</span>)
+                </h3>
+                <div id="pendingOrdersList"></div>
+            </div>
+            
+            <!-- Add Service -->
+            <div class="bg-gray-800/50 rounded-xl p-6 border border-purple-500/20 mb-6">
+                <h3 class="text-xl font-bold mb-4">➕ Add Service</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <select id="newPlatform" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                        <option value="">Select Platform</option>
+                        <option value="1">Instagram</option>
+                        <option value="2">YouTube</option>
+                        <option value="3">Facebook</option>
+                        <option value="4">Twitter/X</option>
+                    </select>
+                    <input type="text" id="newName" placeholder="Service Name" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                    <input type="number" step="0.1" id="newPrice" placeholder="Price per 1000" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                    <input type="number" id="newMin" placeholder="Min" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                    <input type="number" id="newMax" placeholder="Max" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                    <input type="text" id="newTime" placeholder="Time" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white">
+                </div>
+                <button onclick="addNewService()" class="mt-4 bg-green-600 px-6 py-3 rounded-lg font-bold">Add</button>
+            </div>
+
+            <!-- Manage Services -->
+            <div class="bg-gray-800/50 rounded-xl p-6 border border-purple-500/20 mb-6">
+                <h3 class="text-xl font-bold mb-4">📝 Manage Services</h3>
+                <div id="adminServicesList"></div>
+            </div>
+
+            <!-- All Orders -->
+            <div class="bg-gray-800/50 rounded-xl p-6 border border-purple-500/20">
+                <h3 class="text-xl font-bold mb-4">📋 All Orders</h3>
+                <div id="adminOrdersList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-gray-800 p-8 rounded-xl max-w-md w-full border border-purple-500/30">
+            <h2 class="text-2xl font-bold mb-4">Admin Login</h2>
+            <input type="password" id="adminPass" placeholder="Password" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 mb-4 text-white">
+            <div class="flex gap-3">
+                <button onclick="adminLogin()" class="flex-1 bg-purple-600 py-3 rounded-lg font-bold">Login</button>
+                <button onclick="closeAdminModal()" class="flex-1 bg-gray-700 py-3 rounded-lg font-bold">Cancel</button>
+            </div>
+            <p class="text-xs text-gray-500 mt-4 text-center">Password: admin123</p>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-gray-800 p-8 rounded-xl max-w-2xl w-full border border-yellow-500/30">
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-4">⏳</div>
+                <h2 class="text-3xl font-bold mb-2 text-yellow-400">Order Submitted!</h2>
+                <p class="text-gray-400">Waiting for admin verification...</p>
+            </div>
+            <div class="bg-gray-900/50 rounded-lg p-6 mb-6" id="orderDetailsBox"></div>
+        </div>
+    </div>
+
+    <script>
+        let services = [
+            {
+                id: 1, platform: 'Instagram', color: 'bg-purple-600',
+                items: [
+                    { id: 101, name: 'Instagram Followers', price: 1.5, min: 100, max: 10000, time: '24-48 hours' },
+                    { id: 102, name: 'Instagram Likes', price: 0.5, min: 100, max: 10000, time: '1-6 hours' },
+                    { id: 103, name: 'Instagram Views', price: 0.3, min: 1000, max: 100000, time: '1-3 hours' },
+                    { id: 104, name: 'Instagram Comments', price: 2.0, min: 10, max: 1000, time: '12-24 hours' },
+                    { id: 105, name: 'Instagram Story Views', price: 0.4, min: 500, max: 50000, time: '2-6 hours' },
+                    { id: 106, name: 'Instagram Reels Views', price: 0.6, min: 1000, max: 100000, time: '6-12 hours' },
+                    { id: 107, name: 'Instagram Auto Likes', price: 3.0, min: 50, max: 500, time: 'Instant' }
+                ]
+            },
+            {
+                id: 2, platform: 'YouTube', color: 'bg-red-600',
+                items: [
+                    { id: 201, name: 'YouTube Subscribers', price: 2.5, min: 100, max: 5000, time: '48-72 hours' },
+                    { id: 202, name: 'YouTube Views', price: 1.0, min: 1000, max: 100000, time: '24-48 hours' },
+                    { id: 203, name: 'YouTube Likes', price: 1.5, min: 100, max: 10000, time: '12-24 hours' },
+                    { id: 204, name: 'YouTube Comments', price: 3.5, min: 10, max: 500, time: '24-48 hours' },
+                    { id: 205, name: 'YouTube Shares', price: 2.0, min: 50, max: 5000, time: '12-24 hours' },
+                    { id: 206, name: 'YouTube Watch Time', price: 4.0, min: 1000, max: 50000, time: '72-96 hours' }
+                ]
+            },
+            {
+                id: 3, platform: 'Facebook', color: 'bg-blue-600',
+                items: [
+                    { id: 301, name: 'Facebook Page Likes', price: 2.0, min: 100, max: 10000, time: '24-48 hours' },
+                    { id: 302, name: 'Facebook Followers', price: 1.8, min: 100, max: 10000, time: '24-48 hours' },
+                    { id: 303, name: 'Facebook Post Likes', price: 1.2, min: 100, max: 10000, time: '6-12 hours' },
+                    { id: 304, name: 'Facebook Post Shares', price: 3.0, min: 50, max: 5000, time: '12-24 hours' },
+                    { id: 305, name: 'Facebook Video Views', price: 0.8, min: 1000, max: 100000, time: '12-24 hours' },
+                    { id: 306, name: 'Facebook Comments', price: 4.0, min: 10, max: 1000, time: '24-48 hours' }
+                ]
+            },
+       
